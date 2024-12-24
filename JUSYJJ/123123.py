@@ -4,14 +4,12 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-# Включаем логирование
+
 logging.basicConfig(level=logging.INFO)
 
-# Создаем экземпляр бота
 bot = Bot(token=' ')
 dp = Dispatcher()
 
-# Создаем клавиатуру с кнопками
 keyboard = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="До 1 миллиона рублей")],
@@ -33,12 +31,11 @@ keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-# Функция для обработки команды /start
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     await message.reply("Привет! Я справочник по подбору автомобилей. Выберите диапазон цен или введите сумму числом:", reply_markup=keyboard)
 
-# Функция для обработки команды /help
+
 @dp.message(Command("help"))
 async def cmd_help(message: types.Message):
     help_text = (
@@ -61,7 +58,7 @@ async def cmd_help(message: types.Message):
     )
     await message.reply(help_text)
 
-# Функция для обработки нажатий на кнопки
+
 @dp.message(lambda message: message.text in [
     "До 1 миллиона рублей", "До 1.5 миллиона рублей", "До 2 миллионов рублей", "До 3 миллионов рублей", "До 3.5 миллионов рублей",
     "До 4 миллионов рублей", "До 4.5 миллионов рублей", "До 5 миллионов рублей",
@@ -99,7 +96,7 @@ async def process_button(message: types.Message):
         elif message.text == "До 20 миллионов рублей":
             await message.reply("Вот ссылки на автомобили до 20 миллионов рублей: https://auto.ru/catalog/cars/mercedes/g_klasse_amg/21203440/21203483/?complectation_id=21203483_21217612_21203530&only-content=true, https://auto.ru/catalog/cars/audi/rs7/21718520/21718571/?only-content=true, https://auto.ru/catalog/cars/mercedes/e_klasse_amg/22298932/22348747/, https://auto.ru/catalog/cars/bmw/m8/21578636/21578720/?only-content=true, https://auto.ru/catalog/cars/audi/rs_q8/21757239/21757302/?only-content=true, https://auto.ru/catalog/cars/bmw/x5_m/21679476/21679551/?only-content=true")
 
-# Функция для обработки числового ввода
+
 @dp.message(lambda message: message.text.isdigit())
 async def process_numeric_input(message: types.Message):
     budget = int(message.text)
@@ -134,17 +131,17 @@ async def process_numeric_input(message: types.Message):
     else:
         await message.reply("К сожалению, у нас нет информации о автомобилях выше 20 миллионов рублей.")
 
-# Функция для обработки нечислового ввода
+
 @dp.message(lambda message: not message.text.isdigit() and message.text not in ["До 1 миллиона рублей", "До 5 миллионов рублей", "До 10 миллионов рублей", "До 20 миллионов рублей", "Помощь"])
 async def process_invalid_input(message: types.Message):
     await message.reply("Пожалуйста, выберите диапазон цен с помощью кнопки или введите корректную цену.")
 
-# Функция для обработки нажатия кнопки "Помощь"
+
 @dp.message(lambda message: message.text == "Помощь")
 async def process_help_button(message: types.Message):
     await cmd_help(message)
 
-# Основная функция для запуска бота
+
 async def main():
     await dp.start_polling(bot)
 
